@@ -1,0 +1,26 @@
+{
+  "name": "colorapi",
+  "version": "1.0.0",
+  "description": "Test API to return palette objects from colorhunt.co",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhollan5/colorhunter.git"
+  },
+  "keywords": [
+    "colorhunt",
+    "colorpalette"
+  ],
+  "author": "ben h",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bhollan5/colorhunter/issues"
+  },
+  "homepage": "https://github.com/bhollan5/colorhunter#readme",
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
