@@ -15,11 +15,18 @@ app.use(cors());
 app.get('/', function (req, res) {
     res.header('Access-Control-Allow-Origin', '*');
     
+    //
+    // Because I couldn't find a good source for colorpalette ids on colorhunt,
+    // the below function generates a random number from 0 - 10000 and sees if it matches
+    // a color palette code, and calls the function recursively if it doesn't.
+    // 
+    // This means its usually making several calls before returning data.
+    //
     function getColorJson(url) {
+    
+    // Loads in colorhunt url via request
     request(url, function(error, response, html){
         
-        console.log(response.statusCode);
-
         if(!error){
 
             // Parses html via cheerioJS
@@ -38,13 +45,15 @@ app.get('/', function (req, res) {
                         
             var script = $('#jscode').next().html();
             
-            var itemerIndex = script.search("itemer");
+            // Finds our string of data on the page
+            // -- or returns "-1" to itemerIndex if the random code guess doesn't work
+            var itemerIndex = script.search("itemer");  
             
             if (itemerIndex === -1) {
                 console.log(url + "didn't work.");
-                
-                return false;
-                //return getColorJson(Math.floor(Math.random() * 100000))
+                url = Math.floor(Math.random() * 100000).toString();
+                getColorJson('http://colorhunt.co/c/' + url);
+                return;
             }
             
             var itemerString = script.substr(itemerIndex, itemerIndex + 100);
@@ -61,33 +70,20 @@ app.get('/', function (req, res) {
             json.c3 = "#" + json.code.substring(12,18); 
             json.c4 = "#" + json.code.substring(18,24);
   
-            console.log("In return: " + json);
+            console.log("The code " + json.id + " worked!");
              res.json(json);
-            return true;
+            return;
+        } else {
+            console.log("Error on request: ")
+            console.log(error);
         }
   
     })
     }
   
-    // Loads in colorhunt url via request
-        
-    var id = Math.floor(Math.random() * 100000);
-    
-    var url = 'http://colorhunt.co/c/' + id.toString();
-    
-//    var json = getColorJson(url);
-    
-    while (getColorJson('http://colorhunt.co/c/' + Math.floor(Math.random() * 100000).toString())) {
-        
-    }
-    
-//    console.log("trying url : " + url);
-//    
-//    console.log("Outside:")
-//    console.log(json);
-    
-    
-    
+    // Generates first color code and initializes recursive function.
+    var url = Math.floor(Math.random() * 100000).toString();
+    getColorJson('http://colorhunt.co/c/' + url);
     
 
 });
@@ -95,6 +91,6 @@ app.get('/', function (req, res) {
 
 
 app.listen(3000, function () {
-  console.log('Data returned to your host, on port 3000!')
+  console.log('Data returned to localhost, on port 3000!')
 });
     
